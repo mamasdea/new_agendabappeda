@@ -212,10 +212,15 @@
         </div>
     </main>
 
+    <style>
+        /* Hide global footer from layout to prevent double footer */
+        body > footer { display: none !important; }
+    </style>
+
     {{-- FOOTER RUNNING TEXT --}}
-    <footer class="bg-blue-800 text-white py-1 shrink-0 border-t-2 border-orange-500 z-20">
-        <marquee scrollamount="5" class="text-xs font-medium pt-0.5">
-            Selamat Datang di Bappeda Kabupaten Wonosobo • Silakan Hubungi Sub Bagian Umum untuk Reservasi Ruang Rapat • Jagalah Kebersihan dan Ketertiban 
+    <footer class="bg-blue-800 text-white py-0.5 shrink-0 border-t-2 border-orange-500 z-20">
+        <marquee scrollamount="5" class="text-[10px] font-medium pt-0.5">
+            Selamat Datang di Bappeda Kabupaten Wonosobo • Silakan Hubungi Sub Bagian Umum untuk Reservasi Ruang Rapat • Jagalah Kebersihan dan Ketertiban - &copy; Bappeda Kabupaten Wonosobo by <a href="https://github.com/mamasdea" target="_blank" class="text-decoration-none">Mamas Dea</a> 2023 - {{ date('Y') }}
         </marquee>
     </footer>
 
