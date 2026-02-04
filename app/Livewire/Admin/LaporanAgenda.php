@@ -18,6 +18,9 @@ class LaporanAgenda extends Component
 
     public $waText = '';
 
+    #[Url]
+    public $tanggal = ''; // Format Y-m-d
+
     public function render()
     {
         $today = Carbon::today();
@@ -25,27 +28,19 @@ class LaporanAgenda extends Component
 
         $agendaHariIni = collect();
         $agendaBesok = collect();
+        $customDate = null;
 
-        // Logika Filter
-        if ($this->filter === 'hari_ini' || empty($this->filter)) {
-            $agendaHariIni = Agenda::whereDate('tanggal', $today)
+        // Logika Filter Kustom Tanggal
+        if (!empty($this->tanggal)) {
+            $customDate = Carbon::parse($this->tanggal);
+            $agendaHariIni = Agenda::whereDate('tanggal', $customDate)
                 ->orderBy('jam')
                 ->get();
-        }
-
-        if ($this->filter === 'besok' || empty($this->filter)) {
-            $agendaBesok = Agenda::whereDate('tanggal', $tomorrow)
-                ->orderBy('jam')
-                ->get();
-        }
-
-        // Susun Teks WA Bersih
-        $this->waText = "*AGENDA KEGIATAN BAPPEDA KAB. WONOSOBO*\n";
-
-        // Bagian Hari Ini
-        if (empty($this->filter) || $this->filter === 'hari_ini') {
-            $this->waText .= "*HARI " . strtoupper($today->translatedFormat('l, d F Y')) . "*\n\n";
-
+            
+            // WA Text untuk Custom Date
+            $this->waText = "*AGENDA KEGIATAN BAPPEDA KAB. WONOSOBO*\n";
+            $this->waText .= "*HARI " . strtoupper($customDate->translatedFormat('l, d F Y')) . "*\n\n";
+            
             if ($agendaHariIni->count() > 0) {
                 foreach ($agendaHariIni as $agenda) {
                     $jam = $agenda->jam ? $agenda->jam->format('H:i') : '-';
@@ -57,26 +52,62 @@ class LaporanAgenda extends Component
                     $this->waText .= "👤 {$agenda->penyelenggara}{$ket}\n\n";
                 }
             } else {
-                $this->waText .= "_Tidak ada agenda hari ini._\n\n";
+                $this->waText .= "_Tidak ada agenda pada tanggal ini._\n\n";
             }
-        }
 
-        // Bagian Besok
-        if (empty($this->filter) || $this->filter === 'besok') {
-            $this->waText .= "*AGENDA BESOK HARI " . strtoupper($tomorrow->translatedFormat('l, d F Y')) . "*\n\n";
+        } else {
+            // Logika Filter Lama (Hari Ini / Besok / Semua)
+            if ($this->filter === 'hari_ini' || empty($this->filter)) {
+                $agendaHariIni = Agenda::whereDate('tanggal', $today)
+                    ->orderBy('jam')
+                    ->get();
+            }
+    
+            if ($this->filter === 'besok' || empty($this->filter)) {
+                $agendaBesok = Agenda::whereDate('tanggal', $tomorrow)
+                    ->orderBy('jam')
+                    ->get();
+            }
 
-            if ($agendaBesok->count() > 0) {
-                foreach ($agendaBesok as $agenda) {
-                    $jam = $agenda->jam ? $agenda->jam->format('H:i') : '-';
-                    $ket = $agenda->keterangan ? "\nℹ️ " . $agenda->keterangan : "";
-                    
-                    $this->waText .= "🕒 {$jam} WIB\n";
-                    $this->waText .= "📝 {$agenda->acara}\n";
-                    $this->waText .= "📍 {$agenda->tempat}\n";
-                    $this->waText .= "👤 {$agenda->penyelenggara}{$ket}\n\n";
+            // Susun Teks WA Bersih (Logic Lama)
+            $this->waText = "*AGENDA KEGIATAN BAPPEDA KAB. WONOSOBO*\n";
+    
+            // Bagian Hari Ini
+            if (empty($this->filter) || $this->filter === 'hari_ini') {
+                $this->waText .= "*HARI " . strtoupper($today->translatedFormat('l, d F Y')) . "*\n\n";
+    
+                if ($agendaHariIni->count() > 0) {
+                    foreach ($agendaHariIni as $agenda) {
+                        $jam = $agenda->jam ? $agenda->jam->format('H:i') : '-';
+                        $ket = $agenda->keterangan ? "\nℹ️ " . $agenda->keterangan : "";
+                        
+                        $this->waText .= "🕒 {$jam} WIB\n";
+                        $this->waText .= "📝 {$agenda->acara}\n";
+                        $this->waText .= "📍 {$agenda->tempat}\n";
+                        $this->waText .= "👤 {$agenda->penyelenggara}{$ket}\n\n";
+                    }
+                } else {
+                    $this->waText .= "_Tidak ada agenda hari ini._\n\n";
                 }
-            } else {
-                $this->waText .= "_Tidak ada agenda besok._\n";
+            }
+    
+            // Bagian Besok
+            if (empty($this->filter) || $this->filter === 'besok') {
+                $this->waText .= "*AGENDA BESOK HARI " . strtoupper($tomorrow->translatedFormat('l, d F Y')) . "*\n\n";
+    
+                if ($agendaBesok->count() > 0) {
+                    foreach ($agendaBesok as $agenda) {
+                        $jam = $agenda->jam ? $agenda->jam->format('H:i') : '-';
+                        $ket = $agenda->keterangan ? "\nℹ️ " . $agenda->keterangan : "";
+                        
+                        $this->waText .= "🕒 {$jam} WIB\n";
+                        $this->waText .= "📝 {$agenda->acara}\n";
+                        $this->waText .= "📍 {$agenda->tempat}\n";
+                        $this->waText .= "👤 {$agenda->penyelenggara}{$ket}\n\n";
+                    }
+                } else {
+                    $this->waText .= "_Tidak ada agenda besok._\n";
+                }
             }
         }
 
@@ -86,6 +117,7 @@ class LaporanAgenda extends Component
             'today' => $today,
             'tomorrow' => $tomorrow,
             'isFiltered' => !empty($this->filter),
+            'customDate' => $customDate,
         ]);
     }
 }

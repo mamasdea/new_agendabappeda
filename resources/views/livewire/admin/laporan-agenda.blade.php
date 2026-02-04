@@ -1,138 +1,143 @@
 <div>
     {{-- Header Content --}}
-    <div class="d-flex align-items-center justify-content-between mb-5 layout-header">
-        <div>
-            @if($filter === 'hari_ini')
-                <h2 class="fw-bold text-dark mb-1 header-title">AGENDA BAPPEDA</h2>
-                <p class="text-muted mb-0 header-subtitle">{{ $today->translatedFormat('l, d F Y') }}</p>
-            @elseif($filter === 'besok')
-                <h2 class="fw-bold text-dark mb-1 header-title">AGENDA BAPPEDA</h2>
-                <p class="text-muted mb-0 header-subtitle">{{ $tomorrow->translatedFormat('l, d F Y') }}</p>
-            @else
-                <h2 class="fw-bold text-dark mb-1 header-title">Laporan AGENDA BAPPEDA</h2>
-                <p class="text-muted mb-0 header-subtitle">BAPPEDA Kabupaten Wonosobo</p>
-            @endif
+    <div class="d-flex align-items-center justify-content-between mb-4 layout-header border-bottom pb-3">
+        {{-- Kiri: Logo & Judul --}}
+        <div class="d-flex align-items-center gap-3">
+            <img src="{{ asset('assets/logo/logoheader.png') }}" alt="Logo" width="120" class="d-block d-print-inline-block">
+            <div>
+                @if($customDate)
+                    <h2 class="fw-bold text-dark mb-0 header-title text-uppercase">AGENDA BAPPEDA</h2>
+                    <p class="text-muted mb-0 header-subtitle">{{ $customDate->translatedFormat('l, d F Y') }}</p>
+                @elseif($filter === 'hari_ini')
+                    <h2 class="fw-bold text-dark mb-0 header-title text-uppercase">AGENDA BAPPEDA</h2>
+                    <p class="text-muted mb-0 header-subtitle">{{ $today->translatedFormat('l, d F Y') }}</p>
+                @elseif($filter === 'besok')
+                    <h2 class="fw-bold text-dark mb-0 header-title text-uppercase">AGENDA BAPPEDA</h2>
+                    <p class="text-muted mb-0 header-subtitle">{{ $tomorrow->translatedFormat('l, d F Y') }}</p>
+                @else
+                    <h2 class="fw-bold text-dark mb-0 header-title text-uppercase">AGENDA BAPPEDA</h2>
+                    <p class="text-muted mb-0 header-subtitle">Kabupaten Wonosobo</p>
+                @endif
+            </div>
         </div>
-        <div class="d-flex gap-2 action-buttons">
-            <button onclick="copyToClipboard()" class="btn btn-copy">
-                <i class="bi bi-whatsapp me-2"></i>Copy Format WA
+
+        {{-- Kanan: Tombol Aksi --}}
+        <div class="d-flex gap-2 action-buttons d-print-none">
+            <button onclick="copyToClipboard()" class="btn btn-copy shadow-sm">
+                <i class="bi bi-whatsapp me-2"></i>Copy WA
             </button>
-            <button onclick="window.print()" class="btn btn-print">
-                <i class="bi bi-printer-fill me-2"></i>Cetak Laporan
+            <button onclick="window.print()" class="btn btn-print shadow-sm">
+                <i class="bi bi-printer-fill me-2"></i>Cetak
             </button>
+            <button onclick="downloadJPG()" class="btn btn-primary shadow-sm">
+                <i class="bi bi-file-image me-2"></i>JPG
+            </button>
+            <a href="{{ url('/admin/agenda') }}" class="btn btn-secondary shadow-sm">
+                <i class="bi bi-arrow-left me-1"></i> Kembali
+            </a>
         </div>
     </div>
 
     <div class="report-container">
-        {{-- Agenda Hari Ini --}}
-        @if(empty($filter) || $filter == 'hari_ini')
-        <div class="agenda-section mb-5">
-            {{-- Tampilkan Section Header HANYA jika TIDAK difilter (tampilan gabungan) --}}
-            @if(empty($filter))
-            <div class="section-header daily-header">
-                <div class="header-icon">
-                    <i class="bi bi-calendar-event"></i>
-                </div>
-                <div class="header-content">
-                    <span class="badge-day">Agenda Hari Ini</span>
-                    <h3 class="date-title">{{ $today->translatedFormat('l, d F Y') }}</h3>
-                </div>
-            </div>
-            @endif
-            
-            <div class="timeline">
-                @forelse($agendaHariIni as $agenda)
-                <div class="timeline-item">
-                    <div class="timeline-time">
-                        <span class="time-badge">{{ $agenda->jam ? $agenda->jam->format('H:i') : '-' }}</span>
-                        <span class="time-suffix">WIB</span>
-                    </div>
-                    <div class="timeline-content card-hover">
-                        <div class="content-body">
-                            <h5 class="agenda-title">{{ $agenda->acara }}</h5>
-                            <div class="agenda-details">
-                                <div class="detail-item">
-                                    <i class="bi bi-geo-alt-fill text-danger"></i>
-                                    <span>{{ $agenda->tempat }}</span>
+        {{-- Data Table --}}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped border-dark table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th style="width: 5%">No</th>
+                        <th style="width: 10%">Jam</th>
+                        <th style="width: 30%">Acara / Kegiatan</th>
+                        <th style="width: 20%">Tempat</th>
+                        <th style="width: 15%">Penyelenggara</th>
+                        <th style="width: 20%">Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $no = 1; @endphp
+                    
+                    {{-- Agenda Hari Ini / Custom Date --}}
+                    @if($customDate || empty($filter) || $filter == 'hari_ini')
+                        @if(empty($filter) && !$customDate)
+                        <tr class="table-info border-dark">
+                            <td colspan="6" class="fw-bold text-center text-uppercase py-2">
+                                Agenda Hari Ini - {{ $today->translatedFormat('l, d F Y') }}
+                            </td>
+                        </tr>
+                        @endif
+                        
+                        @forelse($agendaHariIni as $agenda)
+                        <tr>
+                            <td class="text-center">{{ $no++ }}</td>
+                            <td class="text-center fw-bold">{{ $agenda->jam ? $agenda->jam->format('H:i') : '-' }} WIB</td>
+                            <td class="fw-bold">{{ $agenda->acara }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i> {{ $agenda->tempat }}
                                 </div>
-                                <div class="detail-item">
-                                    <i class="bi bi-person-fill text-primary"></i>
-                                    <span>{{ $agenda->penyelenggara }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-fill text-primary"></i> {{ $agenda->penyelenggara }}
                                 </div>
+                            </td>
+                            <td class="text-muted fst-italic small text-wrap">
                                 @if($agenda->keterangan)
-                                <div class="detail-item full-width">
-                                    <i class="bi bi-info-circle-fill text-info"></i>
-                                    <span class="text-muted fst-italic">{{ $agenda->keterangan }}</span>
-                                </div>
+                                    <i class="bi bi-info-circle-fill text-info me-1"></i>{{ $agenda->keterangan }}
+                                @else
+                                    -
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="empty-state">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486777.png" alt="No Data" width="60" style="opacity: 0.5;">
-                    <p>Tidak ada kegiatan terjadwal.</p>
-                </div>
-                @endforelse
-            </div>
-        </div>
-        @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted fst-italic py-3">Tidak ada kegiatan terjadwal {{ $customDate ? 'pada tanggal ini' : 'hari ini' }}.</td>
+                        </tr>
+                        @endforelse
+                    @endif
 
-        {{-- Agenda Besok --}}
-        @if(empty($filter) || $filter == 'besok')
-        <div class="agenda-section">
-            {{-- Tampilkan Section Header HANYA jika TIDAK difilter (tampilan gabungan) --}}
-            @if(empty($filter))
-            <div class="section-header tomorrow-header">
-                <div class="header-icon">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
-                <div class="header-content">
-                    <span class="badge-day upcoming">Agenda Besok</span>
-                    <h3 class="date-title">{{ $tomorrow->translatedFormat('l, d F Y') }}</h3>
-                </div>
-            </div>
-            @endif
-            
-            <div class="timeline">
-                @forelse($agendaBesok as $agenda)
-                <div class="timeline-item">
-                    <div class="timeline-time">
-                        <span class="time-badge upcoming">{{ $agenda->jam ? $agenda->jam->format('H:i') : '-' }}</span>
-                        <span class="time-suffix">WIB</span>
-                    </div>
-                    <div class="timeline-content card-hover">
-                        <div class="content-body">
-                            <h5 class="agenda-title">{{ $agenda->acara }}</h5>
-                            <div class="agenda-details">
-                                <div class="detail-item">
-                                    <i class="bi bi-geo-alt-fill text-danger"></i>
-                                    <span>{{ $agenda->tempat }}</span>
+                    {{-- Agenda Besok (Disembunyikan jika Custom Date) --}}
+                    @if(!$customDate && (empty($filter) || $filter == 'besok'))
+                        @if(empty($filter))
+                        <tr class="table-warning border-dark">
+                            <td colspan="6" class="fw-bold text-center text-uppercase py-2">
+                                Agenda Besok - {{ $tomorrow->translatedFormat('l, d F Y') }}
+                            </td>
+                        </tr>
+                        {{-- Optional: Reset No or Continue --}}
+                        @endif
+                        
+                        @forelse($agendaBesok as $agenda)
+                        <tr>
+                            <td class="text-center">{{ $no++ }}</td>
+                            <td class="text-center fw-bold">{{ $agenda->jam ? $agenda->jam->format('H:i') : '-' }} WIB</td>
+                            <td class="fw-bold">{{ $agenda->acara }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i> {{ $agenda->tempat }}
                                 </div>
-                                <div class="detail-item">
-                                    <i class="bi bi-person-fill text-primary"></i>
-                                    <span>{{ $agenda->penyelenggara }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-fill text-primary"></i> {{ $agenda->penyelenggara }}
                                 </div>
+                            </td>
+                            <td class="text-muted fst-italic small text-wrap">
                                 @if($agenda->keterangan)
-                                <div class="detail-item full-width">
-                                    <i class="bi bi-info-circle-fill text-info"></i>
-                                    <span class="text-muted fst-italic">{{ $agenda->keterangan }}</span>
-                                </div>
+                                    <i class="bi bi-info-circle-fill text-info me-1"></i>{{ $agenda->keterangan }}
+                                @else
+                                    -
                                 @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="empty-state">
-                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486803.png" alt="No Data" width="60" style="opacity: 0.5;">
-                    <p>Tidak ada kegiatan terjadwal.</p>
-                </div>
-                @endforelse
-            </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted fst-italic py-3">Tidak ada kegiatan terjadwal besok.</td>
+                        </tr>
+                        @endforelse
+                    @endif
+                </tbody>
+            </table>
         </div>
-        @endif
 
         {{-- Print Footer --}}
         <div class="print-footer mt-5 pt-4 border-top">
@@ -147,7 +152,7 @@
                 </div> -->
             </div>
             <div class="text-center mt-4 copyright-text">
-                <small class="text-muted">&copy; Bappeda Kabupaten Wonosobo by Mamas Dea 2023 - 2026</small>
+                <small class="text-muted">&copy; Bappeda Kabupaten Wonosobo by Dea Aldy Alfian 2023 - {{ date('Y') }}</small>
             </div>
         </div>
     </div>
@@ -167,6 +172,7 @@
     <textarea id="wa-text" class="d-none">{!! $waText !!}</textarea>
 
     {{-- Script Copy --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         function copyToClipboard() {
             var copyText = document.getElementById("wa-text");
@@ -184,6 +190,56 @@
                 }, 2000);
             }, function(err) {
                 console.error('Gagal menyalin: ', err);
+            });
+        }
+
+        function downloadJPG() {
+            // Elemen yang akan di-capture
+            const header = document.querySelector('.layout-header');
+            const content = document.querySelector('.report-container');
+            
+            // Buat container sementara untuk capture agar layout rapi
+            const captureArea = document.createElement('div');
+            captureArea.style.position = 'absolute';
+            captureArea.style.top = '-9999px';
+            captureArea.style.left = '0';
+            captureArea.style.width = '1200px'; // Set lebar tetap agar hasil konsisten
+            captureArea.style.padding = '40px';
+            captureArea.style.backgroundColor = '#ffffff';
+            captureArea.style.zIndex = '-1';
+            
+            // Clone elemen
+            const headerClone = header.cloneNode(true);
+            const contentClone = content.cloneNode(true);
+            
+            // Hapus tombol aksi di clone header
+            const actionButtons = headerClone.querySelector('.action-buttons');
+            if(actionButtons) actionButtons.remove();
+
+            // Tampilkan Footer di Clone (karena defaultnya hidden/hanya print)
+            const footer = contentClone.querySelector('.print-footer');
+            if(footer) {
+                footer.style.display = 'block'; // Paksa tampil untuk capture
+            }
+            
+            // Masukkan ke capture area
+            captureArea.appendChild(headerClone);
+            captureArea.appendChild(contentClone);
+            document.body.appendChild(captureArea);
+            
+            // Proses generate gambar
+            html2canvas(captureArea, {
+                scale: 2, // Kualitas tinggi
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Agenda-Bappeda-' + new Date().toISOString().slice(0,10) + '.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+                
+                // Bersihkan
+                document.body.removeChild(captureArea);
             });
         }
     </script>
@@ -528,14 +584,14 @@
             }
 
             /* Print Footer */
+            /* Footer Statis di akhir dokumen */
             .print-footer {
                 display: block !important;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                padding-top: 1rem;
+                position: relative !important;
+                margin-top: 30px !important;
+                width: 100% !important;
+                background: white !important;
+                page-break-inside: avoid !important;
             }
             
             /* Sembunyikan footer di mode layar biasa */

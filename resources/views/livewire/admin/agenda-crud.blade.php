@@ -60,26 +60,37 @@
         </div>
         <div class="card-body p-4">
             {{-- Search & Actions --}}
-            <div class="row mb-4">
-                <div class="col-md-6 mb-2 mb-md-0">
+            <div class="row mb-4 align-items-end">
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase">Cari Agenda</label>
                     <div class="search-wrapper">
                         <i class="bi bi-search"></i>
                         <input 
                             type="text" 
                             wire:model.live.debounce.300ms="search" 
                             class="form-control search-input" 
-                            placeholder="Cari acara, penyelenggara, atau tempat..."
+                            placeholder="Cari acara..."
                         >
                     </div>
                 </div>
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <label class="small fw-bold text-muted mb-1 text-uppercase">Filter Tanggal</label>
+                    <input type="date" wire:model.live="filterTanggal" class="form-control form-control-custom">
+                </div>
                 <div class="col-md-6 d-flex gap-2 justify-content-md-end">
+                    @if($filterTanggal)
+                        <a href="{{ route('admin.laporan', ['tanggal' => $filterTanggal]) }}" target="_blank" class="btn btn-primary d-flex align-items-center gap-2">
+                            <i class="bi bi-printer-fill"></i>
+                            <span>Cetak {{ \Carbon\Carbon::parse($filterTanggal)->format('d/m/Y') }}</span>
+                        </a>
+                    @endif
                     <a href="{{ route('admin.laporan', ['filter' => 'hari_ini']) }}" target="_blank" class="btn btn-outline-primary d-flex align-items-center gap-2">
-                        <i class="bi bi-printer"></i>
-                        <span>Cetak Hari Ini</span>
+                        <i class="bi bi-calendar-event"></i>
+                        <span>Hari Ini</span>
                     </a>
                     <a href="{{ route('admin.laporan', ['filter' => 'besok']) }}" target="_blank" class="btn btn-outline-success d-flex align-items-center gap-2">
-                        <i class="bi bi-printer"></i>
-                        <span>Cetak Besok</span>
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Besok</span>
                     </a>
                 </div>
             </div>

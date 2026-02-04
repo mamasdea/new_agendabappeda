@@ -10,6 +10,9 @@
             100% { transform: translateY(-50%); }
         }
         .animate-scroll-agenda { animation: scrollUp 60s linear infinite; } /* Diperlambat sedikit agar mudah dibaca */
+
+               /* Hide global footer from layout to prevent double footer */
+        body > footer { display: none !important; }
     </style>
 
     {{-- HEADER --}}
@@ -21,7 +24,6 @@
             <div class="flex flex-col justify-center">
                 <h1 class="text-3xl font-extrabold tracking-tight uppercase leading-none text-blue-900" style="font-family: 'Outfit', sans-serif;">AGENDA BAPPEDA HARI INI</h1>
                 <p class="text-blue-800 text-sm mt-0.5 flex items-center gap-2 font-semibold">
-                    <!-- <span class="flex items-center gap-1"><i class="bi bi-geo-alt-fill text-red-600"></i> Kab. Wonosobo</span> -->
                     <span class="text-gray-400">|</span> 
                     <span class="text-gray-600">{{ $today->translatedFormat('l, d F Y') }}</span>
                 </p>
@@ -29,8 +31,6 @@
         </div>
         <div class="flex items-center gap-3 pr-2">
             <div class="text-right hidden xl:block">
-                <!-- <div class="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Waktu Saat Ini</div>
-                <div class="text-lg font-bold text-blue-900 leading-none">Indonesia Barat</div> -->
             </div>
             <div class="bg-blue-900 text-white px-5 py-2 rounded-xl shadow-lg flex flex-col items-center justify-center min-w-[110px] border border-blue-800">
                 <div id="digital-clock" class="text-3xl font-mono font-bold leading-none tracking-wider">00:00</div>
@@ -211,11 +211,6 @@
 
         </div>
     </main>
-
-    <style>
-        /* Hide global footer from layout to prevent double footer */
-        body > footer { display: none !important; }
-    </style>
 
     {{-- FOOTER RUNNING TEXT --}}
     <footer class="bg-blue-800 text-white py-0.5 shrink-0 border-t-2 border-orange-500 z-20">

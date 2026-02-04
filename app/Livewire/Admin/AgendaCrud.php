@@ -21,6 +21,7 @@ class AgendaCrud extends Component
     public bool $isEditing = false;
     public ?int $editingId = null;
     public string $search = '';
+    public string $filterTanggal = '';
 
     #[Rule('required|max:255')]
     public string $acara = '';
@@ -44,9 +45,14 @@ class AgendaCrud extends Component
     {
         $agendas = Agenda::query()
             ->when($this->search, function ($query) {
-                $query->where('acara', 'like', "%{$this->search}%")
-                    ->orWhere('penyelenggara', 'like', "%{$this->search}%")
-                    ->orWhere('tempat', 'like', "%{$this->search}%");
+                $query->where(function($q) {
+                    $q->where('acara', 'like', "%{$this->search}%")
+                        ->orWhere('penyelenggara', 'like', "%{$this->search}%")
+                        ->orWhere('tempat', 'like', "%{$this->search}%");
+                });
+            })
+            ->when($this->filterTanggal, function ($query) {
+                $query->whereDate('tanggal', $this->filterTanggal);
             })
             ->orderBy('tanggal', 'desc')
             ->orderBy('jam', 'desc')

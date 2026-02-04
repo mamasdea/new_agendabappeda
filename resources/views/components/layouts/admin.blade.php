@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="shortcut icon" href="{{ asset('assets/logo/icon bappeda.png') }}" type="image/x-icon">
     <title>{{ $title ?? 'Admin Panel' }} - Agenda BAPPEDA</title>
     
     <!-- Bootstrap 5 CSS -->
@@ -495,10 +496,10 @@
                 <span>Ruang Rapat</span>
             </a>
 
-            <a href="{{ url('/admin/laporan') }}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
+            <!-- <a href="{{ url('/admin/laporan') }}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
                 <i class="bi bi-printer"></i>
                 <span>Laporan Agenda</span>
-            </a>
+            </a> -->
 
             <div class="nav-section">
                 <div class="nav-section-title">Lainnya</div>
