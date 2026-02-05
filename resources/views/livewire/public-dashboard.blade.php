@@ -22,7 +22,7 @@
             <img src="{{ asset('assets/logo/logoheader.png') }}" alt="Logo Wonosobo" class="h-12 w-auto object-contain drop-shadow-sm">
             
             <div class="flex flex-col justify-center">
-                <h1 class="text-3xl font-extrabold tracking-tight uppercase leading-none text-blue-900" style="font-family: 'Outfit', sans-serif;">AGENDA BAPPEDA HARI INI</h1>
+                <h1 class="text-3xl font-extrabold tracking-tight uppercase leading-none text-blue-900" style="font-family: 'Poppins', sans-serif;">AGENDA BAPPEDA HARI INI</h1>
                 <p class="text-blue-800 text-sm mt-0.5 flex items-center gap-2 font-semibold">
                     <span class="text-gray-400">|</span> 
                     <span class="text-gray-600">{{ $today->translatedFormat('l, d F Y') }}</span>
@@ -225,9 +225,9 @@
     {{-- Tailwind & Scripts --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], mono: ['Outfit', 'monospace'] } } } }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Poppins', 'sans-serif'], mono: ['Poppins', 'monospace'] } } } }
     </script>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');</style>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');</style>
     <script>
         function updateClock() { document.getElementById('digital-clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute:'2-digit' }).replace('.', ':'); }
         setInterval(updateClock, 1000); updateClock();

@@ -9,7 +9,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -19,7 +19,7 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); /* Blue gradient background matching reference */
             min-height: 100vh;
             color: #fff;
@@ -27,7 +27,7 @@
         }
 
         h1, h2, h3, h4, h5, h6 {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         .glass-panel {
@@ -52,7 +52,7 @@
             padding: 8px 24px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 2px solid rgba(255,255,255,0.3);
-            font-family: 'Outfit', monospace;
+            font-family: 'Poppins', monospace;
             font-variant-numeric: tabular-nums;
         }
 
