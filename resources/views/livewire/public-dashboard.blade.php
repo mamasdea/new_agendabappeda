@@ -94,7 +94,7 @@
                                 </div>
                                 <div class="col-span-2 flex items-center justify-center">
                                     @if($agenda->keterangan)
-                                    <p class="text-gray-500 text-[10px] italic line-clamp-1 leading-tight w-full" title="{{ $agenda->keterangan }}"><i class="bi bi-info-circle mr-1 text-orange-400"></i>{{ $agenda->keterangan }}</p>
+                                    <p class="text-gray-500 text-[10px] italic leading-tight w-full break-words" title="{{ $agenda->keterangan }}"><i class="bi bi-info-circle mr-1 text-orange-400"></i>{{ $agenda->keterangan }}</p>
                                     @else
                                     <span class="text-gray-300 text-[10px]">-</span>
                                     @endif
@@ -149,71 +149,43 @@
                 </div>
             </div>
 
-            {{-- CARD 2: Jadwal Mendatang (Slider/Paged Mode) --}}
-            <div class="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col flex-1 min-h-0 overflow-hidden relative">
+            {{-- CARD 2: Jadwal Mendatang (Dynamic Height, Max 50%) --}}
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 flex flex-col shrink-0 max-h-[50%] overflow-hidden transition-all duration-300">
                 <div class="bg-orange-500 px-3 py-2 text-white shrink-0 flex justify-between items-center text-xs shadow-sm">
                     <div class="flex items-center gap-2">
                         <i class="bi bi-calendar-week-fill text-orange-200"></i>
                         <span class="font-bold uppercase tracking-wide">JADWAL PEMAKAIAN RUANG RAPAT</span>
                     </div>
-                    {{-- Page Indicator --}}
-                    <div id="rr-page-indicator" class="flex gap-1">
-                        {{-- Dots filled by JS --}}
-                    </div>
                 </div>
                 
                 {{-- Content Area --}}
-                <div class="flex-1 bg-orange-50/10 relative overflow-hidden">
-                    <table class="w-full text-left h-full">
-                        <!-- <thead class="bg-orange-50 text-orange-800 uppercase font-bold text-[9px] border-b border-orange-100">
-                            <tr>
-                                <th class="px-2 py-1.5 w-[15%]">Tgl</th>
-                                <th class="px-2 py-1.5 w-[12%]">Jam</th>
-                                <th class="px-2 py-1.5">Info Reservasi</th>
+                <div class="overflow-auto p-0 bg-orange-50/10 relative no-scrollbar">
+                    <table class="w-full text-left">
+                        <tbody class="text-[10px]">
+                            @forelse($rrUpcoming as $rr)
+                            <tr class="bg-white hover:bg-orange-50 border-b border-orange-50">
+                                <td class="px-2 py-1.5 font-bold text-orange-600 whitespace-nowrap bg-white/50 align-top w-[15%]">
+                                    {{ $rr->tanggal_rr ? $rr->tanggal_rr->format('d/m') : '' }}
+                                </td>
+                                <td class="px-2 py-1.5 font-mono text-gray-500 font-semibold bg-white/50 align-top w-[12%]">
+                                    {{ $rr->jam_rr ? $rr->jam_rr->format('H:i') : '' }}
+                                </td>
+                                <td class="px-2 py-1 align-top">
+                                    <div class="font-bold text-gray-800 break-words">{{ $rr->tempat_rr }}</div>
+                                    <div class="text-gray-500 mt-px leading-tight break-words">{{ $rr->acara_rr }}</div>
+                                    <div class="text-[9px] text-orange-600 font-bold mt-0.5 truncate">
+                                        <span class="uppercase mr-2"><i class="bi bi-people-fill mr-1 opacity-50"></i>{{ $rr->bidang_rr }}</span>
+                                        @if($rr->ket_rr)
+                                        <span class="text-gray-500 font-normal italic border-l border-gray-300 pl-2"><i class="bi bi-info-circle mr-0.5 opacity-70"></i>{{ $rr->ket_rr }}</span>
+                                        @endif
+                                    </div>
+                                </td>
                             </tr>
-                        </thead> -->
-                        <tbody class="relative text-[10px]">
-                            @if($rrUpcoming->count() > 0)
-                                @php $chunks = $rrUpcoming->chunk(5); @endphp
-                                @foreach($chunks as $index => $chunk)
-                                <tr class="rr-page-group absolute top-0 left-0 w-full transition-opacity duration-1000 ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}" data-page="{{ $index }}">
-                                    <td colspan="3" class="p-0 border-none">
-                                        <table class="w-full">
-                                            @foreach($chunk as $rr)
-                                            <tr class="bg-white hover:bg-orange-50 border-b border-orange-50">
-                                                <td class="px-2 py-1.5 font-bold text-orange-600 whitespace-nowrap bg-white/50 align-top w-[15%]">
-                                                    {{ $rr->tanggal_rr ? $rr->tanggal_rr->format('d/m') : '' }}
-                                                </td>
-                                                <td class="px-2 py-1.5 font-mono text-gray-500 font-semibold bg-white/50 align-top w-[12%]">
-                                                    {{ $rr->jam_rr ? $rr->jam_rr->format('H:i') : '' }}
-                                                </td>
-                                                <td class="px-2 py-1 align-top">
-                                                    <div class="font-bold text-gray-800 truncate">{{ $rr->tempat_rr }}</div>
-                                                    <div class="text-gray-500 truncate mt-px line-clamp-1 leading-tight">{{ $rr->acara_rr }}</div>
-                                                    <div class="text-[9px] text-orange-600 font-bold mt-0.5 truncate">
-                                                        <span class="uppercase mr-2"><i class="bi bi-people-fill mr-1 opacity-50"></i>{{ $rr->bidang_rr }}</span>
-                                                        @if($rr->ket_rr)
-                                                        <span class="text-gray-500 font-normal italic border-l border-gray-300 pl-2"><i class="bi bi-info-circle mr-0.5 opacity-70"></i>{{ $rr->ket_rr }}</span>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                            {{-- Fill empty rows if chunk < 5 to keep layout stable --}}
-                                            @for($k = 0; $k < (5 - $chunk->count()); $k++)
-                                            <tr class="h-[34px]">
-                                                <td colspan="3">&nbsp;</td>
-                                            </tr>
-                                            @endfor
-                                        </table>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="3" class="text-center py-10 text-gray-400 italic text-[10px]">Belum ada data reservasi mendatang.</td>
-                                </tr>
-                            @endif
+                            @empty
+                            <tr>
+                                <td colspan="3" class="text-center py-10 text-gray-400 italic text-[10px]">Belum ada data reservasi mendatang.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -243,40 +215,6 @@
         setInterval(updateClock, 1000); updateClock();
         document.addEventListener("DOMContentLoaded", () => { 
             if({{ $agendas->count() }} > 5) document.getElementById('scrolling-wrapper').classList.add('animate-scroll-agenda'); 
-
-            // Auto Slide Ruang Rapat Upcoming
-            const pages = document.querySelectorAll('.rr-page-group');
-            const totalPages = pages.length;
-            
-            if(totalPages > 1) {
-                // Buat Dots Indicator
-                const indicatorContainer = document.getElementById('rr-page-indicator');
-                for(let i=0; i<totalPages; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = `w-1.5 h-1.5 rounded-full ${i===0 ? 'bg-white' : 'bg-white/40'}`;
-                    dot.id = `dot-${i}`;
-                    indicatorContainer.appendChild(dot);
-                }
-
-                let currentPage = 0;
-                setInterval(() => {
-                    // Hide Current
-                    pages[currentPage].classList.remove('opacity-100', 'z-10');
-                    pages[currentPage].classList.add('opacity-0', 'z-0');
-                    document.getElementById(`dot-${currentPage}`).classList.remove('bg-white');
-                    document.getElementById(`dot-${currentPage}`).classList.add('bg-white/40');
-
-                    // Next Page
-                    currentPage = (currentPage + 1) % totalPages;
-
-                    // Show Next
-                    pages[currentPage].classList.remove('opacity-0', 'z-0');
-                    pages[currentPage].classList.add('opacity-100', 'z-10');
-                    document.getElementById(`dot-${currentPage}`).classList.remove('bg-white/40');
-                    document.getElementById(`dot-${currentPage}`).classList.add('bg-white');
-
-                }, 8000); // Ganti setiap 8 detik
-            }
         });
     </script>
 </div>
