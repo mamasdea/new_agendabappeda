@@ -15,6 +15,11 @@
         body > footer { display: none !important; }
     </style>
 
+    {{-- WATERMARK --}}
+    <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-[5]">
+        <img src="{{ asset('assets/logo/logoheader.png') }}" class="w-[900px] opacity-[0.05]" alt="Watermark Logo">
+    </div>
+
     {{-- HEADER --}}
     <header class="bg-white text-blue-900 shadow-md z-10 p-3 flex justify-between items-center h-20 shrink-0 border-b-4 border-blue-800">
         <div class="flex items-center gap-4 pl-2">
@@ -56,11 +61,12 @@
             </div>
 
             {{-- Table Head --}}
-            <div class="bg-blue-50 border-b border-blue-100 px-3 py-2 grid grid-cols-12 gap-2 font-bold text-blue-800 text-[11px] uppercase tracking-wider shrink-0 z-10">
+            <div class="bg-blue-50 border-b border-blue-100 px-3 py-2 grid grid-cols-[repeat(14,minmax(0,1fr))] gap-2 font-bold text-blue-800 text-[11px] uppercase tracking-wider shrink-0 z-10">
                 <div class="col-span-2 text-center">Waktu</div>
                 <div class="col-span-6 pl-2">Rincian Kegiatan</div>
                 <div class="col-span-2">Lokasi</div>
-                <div class="col-span-2 text-center">Bidang</div>
+                <div class="col-span-2 text-center">Penyelenggara</div>
+                <div class="col-span-2 text-center">Ket.</div>
             </div>
 
             {{-- Scroll Area --}}
@@ -70,16 +76,13 @@
                         @if($i == 1 && $agendas->count() <= 5) @break @endif
                         <div class="scrolling-group">
                             @forelse($agendas as $agenda)
-                            <div class="agenda-item border-b border-gray-100 px-3 py-2 grid grid-cols-12 gap-2 items-center hover:bg-blue-50 transition-colors odd:bg-white even:bg-gray-50/50">
+                            <div class="agenda-item border-b border-gray-100 px-3 py-2 grid grid-cols-[repeat(14,minmax(0,1fr))] gap-2 items-center hover:bg-blue-50 transition-colors odd:bg-white even:bg-gray-50/50">
                                 <div class="col-span-2 flex flex-col items-center justify-center">
                                     <span class="font-bold text-base text-blue-700 bg-blue-100 px-2 py-0.5 rounded">{{ $agenda->jam ? $agenda->jam->format('H:i') : '--:--' }}</span>
                                     <span class="text-[8px] uppercase font-bold text-blue-400 mt-0.5">WIB</span>
                                 </div>
                                 <div class="col-span-6 pl-2 pr-2 border-l-2 border-blue-100">
                                     <h3 class="font-bold text-gray-800 text-[13px] leading-tight mb-0.5">{{ $agenda->acara }}</h3>
-                                    @if($agenda->keterangan)
-                                    <p class="text-gray-500 text-[10px] italic line-clamp-1"><i class="bi bi-info-circle mr-1 text-orange-400"></i>{{ $agenda->keterangan }}</p>
-                                    @endif
                                 </div>
                                 <div class="col-span-2 text-gray-600 text-[10px] font-semibold leading-tight">
                                     <i class="bi bi-geo-alt text-red-500 mr-1"></i> {{ $agenda->tempat }}
@@ -88,6 +91,13 @@
                                     <span class="bg-orange-100 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full text-center border border-orange-200 w-full truncate">
                                         {{ $agenda->penyelenggara }}
                                     </span>
+                                </div>
+                                <div class="col-span-2 flex items-center justify-center">
+                                    @if($agenda->keterangan)
+                                    <p class="text-gray-500 text-[10px] italic line-clamp-1 leading-tight w-full" title="{{ $agenda->keterangan }}"><i class="bi bi-info-circle mr-1 text-orange-400"></i>{{ $agenda->keterangan }}</p>
+                                    @else
+                                    <span class="text-gray-300 text-[10px]">-</span>
+                                    @endif
                                 </div>
                             </div>
                             @empty

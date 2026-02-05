@@ -495,6 +495,11 @@
                 <i class="bi bi-building"></i>
                 <span>Ruang Rapat</span>
             </a>
+            
+            <a href="{{ route('admin.users') }}" class="nav-link {{ request()->is('admin/user-management*') ? 'active' : '' }}">
+                <i class="bi bi-people"></i>
+                <span>Manajemen User</span>
+            </a>
 
             <!-- <a href="{{ url('/admin/laporan') }}" class="nav-link {{ request()->is('admin/laporan*') ? 'active' : '' }}">
                 <i class="bi bi-printer"></i>

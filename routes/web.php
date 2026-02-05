@@ -29,5 +29,6 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/', Dashboard::class)->name('admin.dashboard');
     Route::get('/agenda', AgendaCrud::class)->name('admin.agenda');
     Route::get('/ruang-rapat', RuangRapatCrud::class)->name('admin.ruang-rapat');
+    Route::get('/user-management', \App\Livewire\Admin\UserManagement::class)->name('admin.users');
     Route::get('/laporan', LaporanAgenda::class)->name('admin.laporan');
 });
